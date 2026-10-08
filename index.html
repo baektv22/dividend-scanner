@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="빽담화TV 분배금 스캐너 · 국내 커버드콜 ETF 분배율·분배금·주가 전월 대비 변동, 연분배율 랭킹, 월별 분배율 히트맵">
+<meta property="og:title" content="빽담화TV 분배금 스캐너">
+<meta property="og:description" content="커버드콜 ETF 분배율·분배금 변동, 연분배율 랭킹, 월별 히트맵">
+<meta property="og:type" content="website">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>빽담화TV 분배금 스캐너</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: ledger-style tool — controls bar, three summary counters, then paired down/up ranking tables per metric */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --surface-2:#eef1ed; --line:#dde2dc; --line-2:#c9d0c8;
+  --ink:#18221d; --ink-2:#4b5751; --ink-3:#7b8680;
+  --accent:#2f6b4f; --accent-soft:#e1ede6; --accent-ink:#ffffff;
+  --up:#d1293d; --up-soft:#fbe9eb; --down:#2459c9; --down-soft:#e7eefb; --flat:#7b8680;
+  --font-display:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(24,34,29,.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121614; --surface:#1a201d; --surface-2:#222a26; --line:#2c3531; --line-2:#3a4540;
+  --ink:#e6ece8; --ink-2:#aab5af; --ink-3:#7f8a84;
+  --accent:#6fbf95; --accent-soft:#1f3329; --accent-ink:#0f1a14;
+  --up:#ff6b7a; --up-soft:#3a1f24; --down:#6f9bff; --down-soft:#1c2740; --flat:#7f8a84;
+  --shadow:none; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#121614; --surface:#1a201d; --surface-2:#222a26; --line:#2c3531; --line-2:#3a4540;
+  --ink:#e6ece8; --ink-2:#aab5af; --ink-3:#7f8a84;
+  --accent:#6fbf95; --accent-soft:#1f3329; --accent-ink:#0f1a14;
+  --up:#ff6b7a; --up-soft:#3a1f24; --down:#6f9bff; --down-soft:#1c2740; --flat:#7f8a84;
+  --shadow:none; color-scheme:dark;}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.5;margin:0}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:20px;padding-block:24px 48px;display:flex;flex-direction:column;gap:18px}
+@media (max-width:520px){.wrap{padding-inline:16px}}
+.num{font-variant-numeric:tabular-nums}
+
+:root{--yt:#e0242f;--yt-ink:#ffffff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--yt:#ff4a55;--yt-ink:#1a0a0b}}
+:root[data-theme="dark"]{--yt:#ff4a55;--yt-ink:#1a0a0b}
+.promo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.promo{grid-template-columns:1fr}}
+.promo-a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;text-decoration:none;min-width:0;transition:transform .12s ease,box-shadow .12s ease}
+.promo-a:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(24,34,29,.14)}
+.promo-a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.promo-a .ic{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.18)}
+.promo-a .tx{display:flex;flex-direction:column;min-width:0;line-height:1.35}
+.promo-a b{font-size:15.5px;font-weight:700}
+.promo-a small{font-size:12px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.promo-a .go{margin-left:auto;font-size:18px;font-weight:700}
+.promo-a.consult{background:var(--accent);color:var(--accent-ink)}
+.promo-a.yt{background:var(--yt);color:var(--yt-ink)}
+@media (prefers-reduced-motion:reduce){.promo-a{transition:none}.promo-a:hover{transform:none}}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.brand{display:flex;flex-direction:column;gap:4px;min-width:0}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--accent);font-weight:600}
+h1{font-family:var(--font-display);font-weight:400;font-size:clamp(26px,4vw,36px);line-height:1.1;margin:0;text-wrap:balance}
+.sub{color:var(--ink-2);margin:0}
+.asof{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:13px;padding:5px 12px;border-radius:999px}
+
+.controls{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.field{display:flex;flex-direction:column;gap:3px}
+.field label{font-size:11px;color:var(--ink-3);letter-spacing:.04em}
+select,input[type=search]{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-height:36px}
+input[type=search]{min-width:0}
+.searchbox{display:flex;flex:1 1 240px;min-width:0}
+.searchbox input{width:100%}
+select:focus-visible,input:focus-visible,button:focus-visible,tr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;cursor:pointer;border:1px solid var(--line-2);background:transparent;color:var(--ink-2);border-radius:999px;padding:4px 12px;display:inline-flex;gap:5px;align-items:center}
+.chip small{color:var(--ink-3);font-size:11px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed=true] small{color:inherit;opacity:.7}
+.btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px;min-height:36px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.spacer{flex:1}
+
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:820px){.summary{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.card h3{margin:0;font-size:12px;color:var(--ink-3);font-weight:500;letter-spacing:.04em}
+.counts{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;font-size:24px;font-weight:700}
+.counts a{text-decoration:none;color:inherit;display:inline-flex;gap:6px;align-items:baseline}
+.counts a:hover span{text-decoration:underline}
+.dn{color:var(--down)} .up{color:var(--up)} .fl{color:var(--flat)}
+.counts .lab{font-size:15px;font-weight:600}
+.bar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--surface-2)}
+.bar i{display:block;height:100%}
+.meta{font-size:12px;color:var(--ink-3)}
+
+.section-head{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+.section-head h2{margin:0;font-size:17px;font-weight:700}
+.section-head .meta{font-size:12px}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.pair{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;min-width:0;box-shadow:var(--shadow);scroll-margin-top:16px}
+.panel-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.panel-h h4{margin:0;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+.tri{font-size:11px}
+.pill{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
+.scroll{max-height:380px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{position:sticky;top:0;background:var(--surface-2);color:var(--ink-3);font-weight:500;font-size:11.5px;text-align:right;padding:7px 10px;white-space:nowrap;z-index:1}
+thead th:nth-child(1),thead th:nth-child(2){text-align:left}
+tbody td{padding:8px 10px;border-top:1px solid var(--line);text-align:right;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+td.rk{color:var(--ink-3);text-align:left;width:32px}
+td.nm{text-align:left;white-space:normal;min-width:180px}
+td.nm b{font-weight:600}
+td.nm .cd{color:var(--ink-3);font-size:11px;margin-left:4px}
+td.cur{font-weight:700;color:var(--ink)}
+td.prev{color:var(--ink-2)}
+td.chg{font-weight:700}
+td.chg small{font-weight:500;opacity:.8;margin-left:3px;font-size:11px}
+.empty{padding:28px 14px;text-align:center;color:var(--ink-3)}
+.mag{display:inline-block;width:46px;height:5px;border-radius:3px;background:var(--surface-2);vertical-align:middle;margin-right:6px;overflow:hidden}
+.mag i{display:block;height:100%}
+@media (max-width:520px){.mag{display:none}}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{font:inherit;font-size:14px;font-weight:600;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--ink-3);padding:8px 14px;cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.view{display:flex;flex-direction:column;gap:18px}
+.wrap-h{flex-wrap:wrap}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px}
+.seg button{font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--line-2);background:transparent;color:var(--ink-2);border-radius:8px;padding:5px 10px}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.rk-body{padding:12px 14px;display:flex;flex-direction:column;gap:5px}
+.rk{display:grid;grid-template-columns:minmax(120px,280px) minmax(0,1fr);gap:10px;align-items:center;cursor:pointer;border-radius:6px;padding:2px 4px}
+.rk:hover{background:var(--surface-2)}
+.rk .n{text-align:right;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk .n small{color:var(--ink-3);margin-right:6px}
+.rk .tr{display:flex;align-items:center;gap:8px;min-width:0}
+.rk .b{height:16px;border-radius:4px;background:var(--accent);flex:none;min-width:2px}
+.rk .v{font-size:12.5px;font-weight:700;white-space:nowrap}
+.rk .v em{font-style:normal;font-weight:500;color:var(--ink-3);font-size:11px;margin-left:4px}
+@media (max-width:520px){.rk{grid-template-columns:1fr;gap:2px}.rk .n{text-align:left}}
+.rk-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px 14px;border-top:1px solid var(--line)}
+.btn.sm{min-height:30px;padding:4px 10px;font-size:12px}
+.legend{display:flex;align-items:center;gap:3px;font-size:11.5px;color:var(--ink-3)}
+.legend i{width:14px;height:12px;border-radius:2px;display:inline-block}
+.legend span{margin:0 4px}
+.hm-scroll{overflow:auto;max-height:760px}
+.hm{border-collapse:separate;border-spacing:2px;font-size:11.5px;width:auto}
+.hm th{position:sticky;top:0;background:var(--surface);color:var(--ink-3);font-weight:500;padding:4px 2px;text-align:center;z-index:2;line-height:1.25}
+.hm th b{display:block;color:var(--ink);font-weight:700}
+.hm th.nmh,.hm td.nm{position:sticky;left:0;background:var(--surface);z-index:3;text-align:left;white-space:nowrap;padding:3px 10px 3px 6px;font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.hm th.nmh{z-index:4}
+.hm td.c{width:46px;min-width:46px;height:24px;text-align:center;border-radius:3px;position:relative;font-variant-numeric:tabular-nums;padding:0 2px}
+.hm td.c.e{background:var(--surface-2);opacity:.5}
+.hm td.c .t{position:absolute;top:0;right:1px;font-size:8px;line-height:1;color:var(--up)}
+.drop{color:var(--up)}
+:root{--h1:#e3f1e8;--h2:#b7dcc6;--h3:#7fbf9b;--h4:#3f9a6b;--h5:#17663f;--h-ink-l:#18221d;--h-ink-d:#ffffff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--h1:#1f2e26;--h2:#24503a;--h3:#2f7a52;--h4:#45a571;--h5:#7fd4a3;--h-ink-l:#e6ece8;--h-ink-d:#0f1a14}}
+:root[data-theme="dark"]{--h1:#1f2e26;--h2:#24503a;--h3:#2f7a52;--h4:#45a571;--h5:#7fd4a3;--h-ink-l:#e6ece8;--h-ink-d:#0f1a14}
+
+footer{color:var(--ink-3);font-size:12px;line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
+footer p{margin:0 0 4px}
+
+/* detail overlay */
+.ov{position:fixed;inset:0;background:rgba(10,14,12,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.sheet{background:var(--surface);color:var(--ink);border-radius:14px;width:min(760px,100%);max-height:calc(100% - 32px);overflow:auto;padding:18px 18px 20px;display:flex;flex-direction:column;gap:14px;border:1px solid var(--line)}
+.sheet-h{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.sheet-h h3{margin:0;font-size:18px;text-wrap:balance}
+.sheet-h .meta{margin-top:2px}
+.x{font:inherit;font-size:18px;line-height:1;background:transparent;border:1px solid var(--line-2);color:var(--ink-2);border-radius:8px;width:34px;height:34px;cursor:pointer;flex:none}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.kpis{grid-template-columns:1fr}}
+.kpi{background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.kpi .l{font-size:11px;color:var(--ink-3)}
+.kpi .v{font-size:19px;font-weight:700}
+.kpi .d{font-size:12px;font-weight:600}
+.chart{width:100%;overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:520px;height:auto}
+.chart-t{font-size:12px;color:var(--ink-3);display:flex;gap:14px;flex-wrap:wrap}
+.chart-t span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.hist td,.hist th{text-align:right}
+.hist th:first-child,.hist td:first-child{text-align:left}
+.hist tbody tr{cursor:default}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13px;z-index:20}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:pop .16s ease-out}@keyframes pop{from{transform:translateY(6px);opacity:.6}}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <nav class="promo" aria-label="빽담화TV 바로가기">
+    <a class="promo-a consult" href="https://naver.me/xVBIAFXV" target="_blank" rel="noopener">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+      <span class="tx"><b>빽담화TV 재무상담 신청하기</b><small>내 자산·노후·ETF 포트폴리오, 1:1로 점검받기</small></span>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
+    <a class="promo-a yt" href="https://www.youtube.com/@baektv" target="_blank" rel="noopener">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+      <span class="tx"><b>빽담화TV 보러가기</b><small>월배당·커버드콜 ETF 분석 영상</small></span>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
+  </nav>
+  <header>
+    <div class="brand">
+      <span class="eyebrow">빽담화TV · 커버드콜 ETF</span>
+      <h1>분배금 스캐너</h1>
+      <p class="sub">국내 상장 커버드콜 ETF <span id="nAll" class="num"></span>종의 분배율·분배금·주가를 지급기준월끼리 비교합니다. 종목을 누르면 월별 추이가 열립니다.</p>
+    </div>
+    <span class="asof num" id="asof"></span>
+  </header>
+
+  <section class="controls" aria-label="비교 조건">
+    <div class="row">
+      <div class="field"><label for="selBase">기준월</label><select id="selBase"></select></div>
+      <div class="field"><label for="selCmp">비교 대상</label>
+        <select id="selCmp">
+          <option value="1">전월</option>
+          <option value="3">3개월 전</option>
+          <option value="6">6개월 전</option>
+          <option value="12">1년 전 (전년 동월)</option>
+        </select>
+      </div>
+      <div class="field searchbox"><label for="q">종목 검색</label><input type="search" id="q" placeholder="종목명 또는 코드 (예: 나스닥, 490600)" autocomplete="off"></div>
+      <div class="field"><label>&nbsp;</label><button class="btn" id="copyBtn" type="button">표 복사 (엑셀 붙여넣기용)</button></div>
+    </div>
+    <div class="row"><div class="chips" id="chips" role="group" aria-label="운용사"></div></div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="화면">
+    <button type="button" role="tab" class="tab" id="tab-scan" data-v="scan">전월 대비 변동</button>
+    <button type="button" role="tab" class="tab" id="tab-rank" data-v="rank">분배율 랭킹 · 월별 히트맵</button>
+  </nav>
+
+  <div id="vScan" class="view">
+    <section class="summary" id="summary" aria-label="변동 요약"></section>
+    <div id="sections"><div class="empty" id="loadMsg">data.xlsx 데이터를 불러오는 중입니다…</div></div>
+  </div>
+
+  <div id="vRank" class="view" hidden>
+    <section class="panel big">
+      <div class="panel-h wrap-h">
+        <h4>분배율 랭킹</h4><span class="pill num" id="rkCount"></span>
+        <span class="spacer"></span>
+        <div class="seg" id="rkSeg" role="group" aria-label="랭킹 기준">
+          <button type="button" data-m="yr" aria-pressed="true">연분배율 (%)</button>
+          <button type="button" data-m="last" aria-pressed="false">최근 월 분배율 (%)</button>
+          <button type="button" data-m="sum" aria-pressed="false">12개월 주당 합계 (원)</button>
+        </div>
+      </div>
+      <div class="rk-body" id="rkBars"></div>
+      <div class="rk-foot">
+        <span class="meta" id="rkNote"></span>
+        <button type="button" class="btn sm" id="rkMore"></button>
+      </div>
+    </section>
+
+    <section class="panel big">
+      <div class="panel-h wrap-h">
+        <h4>월별 히트맵</h4><span class="meta" id="hmRange"></span>
+        <span class="spacer"></span>
+        <div class="legend" id="hmLegend"></div>
+      </div>
+      <div class="hm-scroll"><table class="hm" id="hm"></table></div>
+      <div class="rk-foot"><span class="meta">셀 값은 해당 지급기준월의 분배율(%)입니다. 색은 표시 구간 전체 값의 5~95% 범위를 5단계로 나눈 것이고, <b class="drop">▼</b>는 분배율이 전월보다 20% 이상 줄어든 달입니다. 행 순서는 위 랭킹과 같습니다.</span></div>
+    </section>
+  </div>
+
+  <footer>
+    <p>자료: 각 운용사 분배금 공지 기준 월별 지급기준일 데이터(분배율·분배금액·종가)를 빽담화TV가 정리. 분배율은 공지된 수치를 그대로 사용했습니다.</p>
+    <p>비교는 달력 기준으로 같은 지급기준월끼리 합니다. 두 달 모두 값이 있는 종목만 집계하며, 신규 상장 종목은 비교 가능한 달부터 포함됩니다.</p>
+    <p>이 자료는 정보 제공 목적이며 특정 종목의 매수·매도 권유가 아닙니다. 과거 분배금은 미래 분배금을 보장하지 않으며, 투자 결정과 그 결과의 책임은 투자자 본인에게 있습니다.</p>
+  </footer>
+</div>
+
+<div class="ov" id="ov" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dTitle" id="sheet"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+let D = [];
+const METRICS = [
+  {key:'rate', i:0, name:'분배율', unit:'%'},
+  {key:'amt',  i:1, name:'분배금', unit:'원'},
+  {key:'price',i:2, name:'주가', unit:'원', note:'지급기준일 종가'}
+];
+let months = [];
+const st = {base:'', k:1, brand:'전체', q:''};
+try{ const s = JSON.parse(localStorage.getItem('dscan')||'{}'); if(s.k) st.k=s.k; }catch(_){}
+
+const $ = id => document.getElementById(id);
+const fmtInt = v => Math.round(v).toLocaleString('ko-KR');
+const r2 = v => Math.round(v*100)/100;
+const shift = (m,k)=>{ const [y,mo]=m.split('-').map(Number); const t=y*12+(mo-1)-k; return `${Math.floor(t/12)}-${String(t%12+1).padStart(2,'0')}`; };
+const ym = m => m.replace('-','.');
+const sgn = v => v>0?'+':'';
+const cls = v => v>0?'up':v<0?'dn':'fl';
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function fmtVal(m,v){ return v==null?'–': m.key==='rate'? v.toFixed(2)+'%' : fmtInt(v)+'원'; }
+function fmtChg(m,x){
+  if(m.key==='rate') return `${sgn(x.d)}${x.d.toFixed(2)}%p`;
+  return `${sgn(x.p)}${x.p.toFixed(1)}%<small>(${sgn(x.d)}${fmtInt(x.d)}원)</small>`;
+}
+
+/* ---------- controls ---------- */
+function initControls(){
+  $('nAll').textContent = D.length;
+  const sb = $('selBase');
+  [...months].reverse().forEach(m=>{ const o=document.createElement('option'); o.value=m; o.textContent = m===months[months.length-1]? `${m} (최근)` : m; sb.appendChild(o); });
+  sb.value = st.base; $('selCmp').value = String(st.k);
+  sb.onchange = ()=>{ st.base=sb.value; render(); };
+  $('selCmp').onchange = e=>{ st.k=+e.target.value; try{localStorage.setItem('dscan',JSON.stringify({k:st.k}))}catch(_){}; render(); };
+  $('q').oninput = e=>{ st.q=e.target.value.trim().toLowerCase(); render(); };
+  const brands = ['전체', ...[...new Set(D.map(e=>e.b))]];
+  const cnt = b => b==='전체'?D.length:D.filter(e=>e.b===b).length;
+  $('chips').innerHTML = brands.map(b=>`<button type="button" class="chip" data-b="${esc(b)}" aria-pressed="${b===st.brand}">${esc(b)} <small class="num">${cnt(b)}</small></button>`).join('');
+  $('chips').onclick = e=>{ const t=e.target.closest('.chip'); if(!t) return; st.brand=t.dataset.b; [...$('chips').children].forEach(c=>c.setAttribute('aria-pressed', c===t)); render(); };
+  $('copyBtn').onclick = copyTable;
+}
+
+/* ---------- compute ---------- */
+function filtered(){
+  return D.filter(e => (st.brand==='전체'||e.b===st.brand) && (!st.q || e.n.toLowerCase().includes(st.q) || e.c.toLowerCase().includes(st.q)));
+}
+function compute(list){
+  const cmp = shift(st.base, st.k);
+  const out = {};
+  METRICS.forEach(m=>{
+    const rows=[]; let flat=0;
+    list.forEach(e=>{
+      const a=e.s[cmp]?.[m.i], b=e.s[st.base]?.[m.i];
+      if(a==null||b==null) return;
+      const d = m.key==='rate'? r2(b-a) : b-a;
+      const p = a? (b-a)/a*100 : 0;
+      if(d===0){ flat++; return; }
+      rows.push({e,a,b,d,p});
+    });
+    const score = x => m.key==='rate'? x.d : x.p;
+    const down = rows.filter(x=>x.d<0).sort((x,y)=>score(x)-score(y)||x.e.n.localeCompare(y.e.n));
+    const up = rows.filter(x=>x.d>0).sort((x,y)=>score(y)-score(x)||x.e.n.localeCompare(y.e.n));
+    out[m.key] = {down, up, flat, n: rows.length+flat};
+  });
+  return {cmp, out};
+}
+
+/* ---------- render ---------- */
+function render(){
+  const list = filtered();
+  const {cmp, out} = compute(list);
+  $('asof').textContent = `${cmp} → ${st.base} 비교`;
+
+  $('summary').innerHTML = METRICS.map(m=>{
+    const o=out[m.key], tot=o.n||1;
+    return `<div class="card"><h3>${m.name}${m.note?` (${m.note})`:''}</h3>
+      <div class="counts num">
+        <a href="#p-${m.key}-down" class="dn"><span class="lab">▼ 하락</span>${o.down.length}</a>
+        <a href="#p-${m.key}-up" class="up"><span class="lab">▲ 상승</span>${o.up.length}</a>
+        <span class="fl"><span class="lab">유지</span> ${o.flat}</span>
+      </div>
+      <div class="bar" aria-hidden="true"><i style="width:${o.down.length/tot*100}%;background:var(--down)"></i><i style="width:${o.flat/tot*100}%;background:var(--line-2)"></i><i style="width:${o.up.length/tot*100}%;background:var(--up)"></i></div>
+      <div class="meta num">비교 가능 ${o.n}종목 · ${ym(cmp)} 대비 ${ym(st.base)}</div></div>`;
+  }).join('');
+
+  $('sections').innerHTML = METRICS.map(m=>{
+    const o=out[m.key];
+    const maxAbs = Math.max(1e-9,...[...o.down,...o.up].map(x=>Math.abs(m.key==='rate'?x.d:x.p)));
+    const panel = (dir,arr,label)=>`
+      <div class="panel" id="p-${m.key}-${dir}">
+        <div class="panel-h"><h4><span class="tri ${dir==='up'?'up':'dn'}">${dir==='up'?'▲':'▼'}</span>${m.name} ${label} 종목</h4><span class="pill num">${arr.length}종목</span></div>
+        <div class="scroll">${arr.length? `<table><thead><tr><th>#</th><th>종목</th><th class="num">${cmp}</th><th class="num">${st.base}</th><th>변동</th></tr></thead><tbody>
+          ${arr.map((x,i)=>`<tr tabindex="0" data-c="${esc(x.e.c)}"><td class="rk num">${i+1}</td>
+            <td class="nm"><b>${esc(x.e.n)}</b><span class="cd">${esc(x.e.c)}</span></td>
+            <td class="prev num">${fmtVal(m,x.a)}</td><td class="cur num">${fmtVal(m,x.b)}</td>
+            <td class="chg num ${cls(x.d)}"><span class="mag"><i style="width:${Math.abs(m.key==='rate'?x.d:x.p)/maxAbs*100}%;background:var(--${x.d>0?'up':'down'})"></i></span>${fmtChg(m,x)}</td></tr>`).join('')}
+          </tbody></table>` : `<div class="empty">조건에 맞는 ${label} 종목이 없습니다.</div>`}</div>
+      </div>`;
+    return `<div class="section-head"><h2>${m.name} 변동</h2><span class="meta">${m.key==='rate'?'변동폭(%p) 순':'변동률(%) 순'} · 유지 ${o.flat}종목</span></div>
+      <div class="pair">${panel('down',o.down,'하락')}${panel('up',o.up,'상승')}</div>`;
+  }).join('');
+}
+
+/* ---------- detail ---------- */
+let lastFocus=null;
+function openDetail(code){
+  const e = D.find(x=>x.c===code); if(!e) return;
+  lastFocus=document.activeElement;
+  const cmp = shift(st.base, st.k);
+  const cur=e.s[st.base]||[], prv=e.s[cmp]||[];
+  const kpi = (m)=>{
+    const a=prv[m.i], b=cur[m.i];
+    let d='';
+    if(a!=null&&b!=null){ const dd=m.key==='rate'?r2(b-a):b-a; const p=a?(b-a)/a*100:0;
+      d = `<div class="d num ${cls(dd)}">${m.key==='rate'? `${sgn(dd)}${dd.toFixed(2)}%p` : `${sgn(p)}${p.toFixed(1)}% (${sgn(dd)}${fmtInt(dd)}원)`} <span style="color:var(--ink-3);font-weight:500">vs ${cmp}</span></div>`; }
+    else d = `<div class="d" style="color:var(--ink-3)">${cmp} 데이터 없음</div>`;
+    return `<div class="kpi"><div class="l">${m.name} · ${st.base}</div><div class="v num">${fmtVal(m,b)}</div>${d}</div>`;
+  };
+  // last 13 months up to base
+  const ms = Object.keys(e.s).filter(m=>m<=st.base).sort().slice(-13);
+  const amts = ms.map(m=>e.s[m][1]);
+  const max = Math.max(1,...amts.filter(v=>v!=null));
+  const step = Math.pow(10,Math.floor(Math.log10(max)));
+  const top = Math.ceil(max/step*2)/2*step || 1;
+  const W=680,H=230,L=44,R=10,T=22,B=30, cw=(W-L-R)/Math.max(ms.length,1), bw=Math.min(34,cw*0.6);
+  const y = v => T+(H-T-B)*(1-v/top);
+  const ticks=[0,top/2,top];
+  const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(e.n)} 월별 분배금">
+    ${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${L-6}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="var(--ink-3)">${fmtInt(t)}</text>`).join('')}
+    ${ms.map((m,i)=>{ const v=e.s[m][1]; const cx=L+cw*i+cw/2; const hl = m===st.base||m===cmp;
+      const col = m===st.base?'var(--accent)': m===cmp?'var(--ink-3)':'var(--line-2)';
+      return `${v!=null?`<rect x="${cx-bw/2}" y="${y(v)}" width="${bw}" height="${Math.max(0,y(0)-y(v))}" rx="3" fill="${col}"/>
+        <text x="${cx}" y="${y(v)-6}" text-anchor="middle" font-size="11" font-weight="${hl?700:500}" fill="${hl?'var(--ink)':'var(--ink-2)'}">${fmtInt(v)}</text>`:''}
+        <text x="${cx}" y="${H-10}" text-anchor="middle" font-size="11" fill="${hl?'var(--ink)':'var(--ink-3)'}" font-weight="${hl?700:400}">${m.slice(2).replace('-','.')}</text>`; }).join('')}
+  </svg>`;
+  const rows = Object.keys(e.s).filter(m=>m<=st.base).sort().reverse();
+  $('sheet').innerHTML = `
+    <div class="sheet-h"><div><h3 id="dTitle">${esc(e.n)}</h3><div class="meta num">${esc(e.c)} · ${esc(e.b)} · ${rows.length}개월 분배 이력</div></div><button class="x" type="button" id="xBtn" aria-label="닫기">×</button></div>
+    <div class="kpis">${METRICS.map(kpi).join('')}</div>
+    <div><div class="chart-t"><span style="--c:var(--accent)">기준월 ${st.base}</span><span style="--c:var(--ink-3)">비교월 ${cmp}</span><span style="--c:var(--line-2)">그 외</span><span style="margin-left:auto">최근 13개월 분배금 (원)</span></div>
+    <div class="chart">${svg}</div></div>
+    <div class="scroll" style="max-height:260px;border:1px solid var(--line);border-radius:10px">
+      <table class="hist"><thead><tr><th>지급기준월</th><th>분배율</th><th>분배금</th><th>종가</th><th>분배금 전월비</th></tr></thead><tbody>
+      ${rows.map(m=>{ const v=e.s[m], p=e.s[shift(m,1)]; let c='–';
+        if(p&&p[1]!=null&&v[1]!=null&&p[1]){ const pc=(v[1]-p[1])/p[1]*100; c=`<span class="${cls(v[1]-p[1])}">${sgn(pc)}${pc.toFixed(1)}%</span>`; }
+        return `<tr><td class="num">${m}</td><td class="num">${fmtVal(METRICS[0],v[0])}</td><td class="num">${fmtVal(METRICS[1],v[1])}</td><td class="num">${fmtVal(METRICS[2],v[2])}</td><td class="num">${c}</td></tr>`;}).join('')}
+      </tbody></table></div>`;
+  $('ov').hidden=false; $('xBtn').focus();
+  $('xBtn').onclick=closeDetail;
+}
+function closeDetail(){ $('ov').hidden=true; lastFocus&&lastFocus.focus&&lastFocus.focus(); }
+$('ov').addEventListener('click',e=>{ if(e.target.id==='ov') closeDetail(); });
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!$('ov').hidden) closeDetail();
+  if(e.key==='Enter'){ const tr=e.target.closest&&e.target.closest('tr[data-c]'); if(tr) openDetail(tr.dataset.c); }
+});
+$('sections').addEventListener('click',e=>{ const tr=e.target.closest('tr[data-c]'); if(tr) openDetail(tr.dataset.c); });
+
+/* ---------- copy ---------- */
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,2200); }
+function copyTable(){
+  const cmp=shift(st.base,st.k);
+  const head=['코드','종목',`분배율 ${cmp}`,`분배율 ${st.base}`,'분배율 변동(%p)',`분배금 ${cmp}`,`분배금 ${st.base}`,'분배금 변동(%)',`종가 ${cmp}`,`종가 ${st.base}`,'종가 변동(%)'];
+  const lines=[head.join('\t')];
+  filtered().forEach(e=>{
+    const a=e.s[cmp]||[], b=e.s[st.base]||[];
+    const pc=(x,y)=> x!=null&&y!=null&&x? ((y-x)/x*100).toFixed(2):'';
+    lines.push([e.c,e.n,a[0]??'',b[0]??'', a[0]!=null&&b[0]!=null? r2(b[0]-a[0]).toFixed(2):'', a[1]??'',b[1]??'',pc(a[1],b[1]), a[2]??'',b[2]??'',pc(a[2],b[2])].join('\t'));
+  });
+  const text=lines.join('\n');
+  const fallback=()=>{ const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); let ok=false; try{ok=document.execCommand('copy')}catch(_){}; ta.remove(); toast(ok?`${lines.length-1}종목을 복사했습니다. 엑셀에 붙여넣으세요.`:'복사하지 못했습니다. 브라우저 권한을 확인해 주세요.'); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(()=>toast(`${lines.length-1}종목을 복사했습니다. 엑셀에 붙여넣으세요.`),fallback); } else fallback();
+}
+
+/* ---------- view switch ---------- */
+st.view = location.hash==='#ranking' ? 'rank' : 'scan';
+st.rk = 'yr'; st.rkAll = false;
+function setView(v){
+  st.view=v;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.v===v));
+  $('vScan').hidden = v!=='scan'; $('vRank').hidden = v!=='rank';
+  $('selCmp').closest('.field').hidden = v!=='scan';
+  render();
+}
+document.querySelector('.tabs').onclick = e=>{ const t=e.target.closest('.tab'); if(t) setView(t.dataset.v); };
+$('rkSeg').onclick = e=>{ const b=e.target.closest('button'); if(!b) return; st.rk=b.dataset.m; [...$('rkSeg').children].forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); };
+$('rkMore').onclick = ()=>{ st.rkAll=!st.rkAll; render(); };
+$('vRank').addEventListener('click',e=>{ const r=e.target.closest('[data-c]'); if(r) openDetail(r.dataset.c); });
+$('vRank').addEventListener('keydown',e=>{ if(e.key==='Enter'){ const r=e.target.closest('[data-c]'); if(r) openDetail(r.dataset.c); } });
+
+function rankRows(list){
+  const win = Array.from({length:12},(_,i)=>shift(st.base,11-i));
+  return list.map(e=>{
+    const p = e.s[st.base]?.[2];
+    const got = win.filter(m=>e.s[m]&&e.s[m][1]!=null);
+    const sum = got.reduce((a,m)=>a+e.s[m][1],0);
+    const last = e.s[st.base]?.[0];
+    return {e, n:got.length, sum, yr: p&&got.length? sum/p*100 : null, last: last??null};
+  });
+}
+function renderRanking(list){
+  const rows = rankRows(list);
+  const key = st.rk;
+  const valid = rows.filter(r=>r[key]!=null && (key!=='sum'||r.n>0)).sort((a,b)=>b[key]-a[key]);
+  const rest = rows.length-valid.length;
+  const shown = st.rkAll? valid : valid.slice(0,15);
+  const max = Math.max(1e-9,...valid.map(r=>r[key]));
+  const fmt = r => key==='sum'? fmtInt(r.sum)+'원' : r[key].toFixed(2)+'%';
+  $('rkCount').textContent = `${valid.length}종목`;
+  $('rkBars').innerHTML = shown.length? shown.map((r,i)=>{
+    const w=r[key]/max*100;
+    const op = 0.45+0.55*(r[key]/max);
+    return `<div class="rk" tabindex="0" data-c="${esc(r.e.c)}" title="${esc(r.e.n)}"><div class="n"><small class="num">${i+1}</small>${esc(r.e.n)}</div>
+      <div class="tr"><div class="b" style="width:calc((100% - 110px) * ${w/100});opacity:${op.toFixed(2)}"></div><span class="v num">${fmt(r)}${key!=='last'&&r.n<12?`<em>${r.n}개월</em>`:''}</span></div></div>`;
+  }).join('') : `<div class="empty">조건에 맞는 종목이 없습니다.</div>`;
+  const notes = {
+    yr:`같은 금액을 투자했을 때 1년간 받은 비율입니다. ${shift(st.base,11)}~${st.base} 12개월 주당 분배금 합계 ÷ ${st.base} 지급기준일 종가. 상장 12개월 미만은 받은 달만 합산(연환산 안 함).`,
+    last:`${st.base} 지급기준월에 공지된 분배율입니다.`,
+    sum:`${shift(st.base,11)}~${st.base} 12개월 동안 1주당 받은 분배금 합계입니다.`
+  };
+  $('rkNote').textContent = notes[key] + (rest? ` ${st.base} 데이터가 없는 ${rest}종목은 제외.`:'');
+  $('rkMore').hidden = valid.length<=15;
+  $('rkMore').textContent = st.rkAll? '상위 15개만 보기' : `전체 ${valid.length}종목 보기`;
+
+  // heatmap — same order as ranking (all valid rows, then the rest)
+  const order = [...valid, ...rows.filter(r=>!valid.includes(r))];
+  const ms = Array.from({length:24},(_,i)=>shift(st.base,23-i));
+  const vals = order.flatMap(r=>ms.map(m=>r.e.s[m]?.[0]).filter(v=>v!=null)).sort((a,b)=>a-b);
+  const q = p => vals.length? vals[Math.min(vals.length-1,Math.max(0,Math.round(p*(vals.length-1))))] : 0;
+  const lo=q(.05), hi=q(.95);
+  const bucket = v => { if(hi<=lo) return 3; const t=(v-lo)/(hi-lo); return Math.max(1,Math.min(5,Math.floor(t*5)+1)); };
+  $('hmRange').textContent = `${ms[0]} ~ ${ms[23]} · ${order.length}종목`;
+  $('hmLegend').innerHTML = `연함 <span class="num">${lo.toFixed(2)}%</span>${[1,2,3,4,5].map(b=>`<i style="background:var(--h${b})"></i>`).join('')}<span class="num">${hi.toFixed(2)}%</span> 진함`;
+  const head = `<thead><tr><th class="nmh">종목</th>${ms.map((m,i)=>{ const [y,mo]=m.split('-'); return `<th>${mo}월${(mo==='01'||i===0)?`<b>${y.slice(2)}</b>`:'<b>&nbsp;</b>'}</th>`; }).join('')}</tr></thead>`;
+  const body = `<tbody>${order.map(r=>`<tr><td class="nm" tabindex="0" data-c="${esc(r.e.c)}" title="${esc(r.e.n)}">${esc(r.e.n)}</td>${ms.map(m=>{
+      const v=r.e.s[m]?.[0]; if(v==null) return `<td class="c e"></td>`;
+      const pv=r.e.s[shift(m,1)]?.[0]; const drop = pv!=null && pv>0 && (pv-v)/pv>=0.2;
+      const b=bucket(v);
+      return `<td class="c" style="background:var(--h${b});color:var(${b>=4?'--h-ink-d':'--h-ink-l'})" title="${esc(r.e.n)} ${m} 분배율 ${v.toFixed(2)}%${pv!=null?` (전월 ${pv.toFixed(2)}%)`:''}">${v.toFixed(2)}${drop?'<span class="t">▼</span>':''}</td>`;
+    }).join('')}</tr>`).join('')}</tbody>`;
+  $('hm').innerHTML = head+body;
+}
+
+const _render = render;
+render = function(){
+  if(st.view==='rank'){ const list=filtered(); $('asof').textContent = `${st.base} 지급기준월 기준`; renderRanking(list); }
+  else _render();
+};
+
+
+/* ---------- data.xlsx loader ---------- */
+function normMonth(v){
+  if(v==null||v==='') return null;
+  if(v instanceof Date && !isNaN(v)) return `${v.getFullYear()}-${String(v.getMonth()+1).padStart(2,'0')}`;
+  if(typeof v==='number'){
+    if(v>19000000){ const s=String(Math.round(v)); return s.slice(0,4)+'-'+s.slice(4,6); }
+    if(v>20000&&v<80000){ const d=new Date(Math.round((v-25569)*864e5)); return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`; }
+    return null;
+  }
+  const s=String(v).replace(/\D/g,'');
+  return s.length>=6 ? s.slice(0,4)+'-'+s.slice(4,6) : null;
+}
+function num(v){
+  if(v==null||v==='') return null;
+  if(typeof v==='number') return isFinite(v)?v:null;
+  const x=parseFloat(String(v).replace(/[,%원\s]/g,''));
+  return isFinite(x)?x:null;
+}
+function parseWB(wb){
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
+  const h=rows[0]||[], lab=rows[1]||[], out=[];
+  h.forEach((x,i)=>{
+    if(i===0||x==null||!String(x).trim()) return;
+    const m=String(x).trim().match(/^(\S+)\s+(.+)$/); if(!m) return;
+    const idx=[i,i+1,i+2], map=[null,null,null];
+    idx.forEach(j=>{ const l=String(lab[j]||''); if(l.includes('분배율')) map[0]=j; else if(l.includes('분배금')) map[1]=j; else if(l.includes('종가')||l.includes('주가')) map[2]=j; });
+    map.forEach((v,k)=>{ if(v==null) map[k]=idx[k]; });
+    const s={};
+    rows.slice(2).forEach(r=>{
+      const mo=normMonth(r[0]); if(!mo) return;
+      const t=map.map(j=>num(r[j]));
+      if(t.every(v=>v==null)) return;
+      s[mo]=t;
+    });
+    out.push({c:m[1], n:m[2].trim(), s});
+  });
+  return out;
+}
+async function boot(){
+  try{
+    if(typeof XLSX==='undefined') throw new Error('엑셀 읽기 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인하세요.');
+    const r=await fetch('data.xlsx?v='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('data.xlsx 파일을 찾지 못했습니다 (HTTP '+r.status+').');
+    D=parseWB(XLSX.read(await r.arrayBuffer(),{type:'array',cellDates:true}));
+    if(!D.length) throw new Error('엑셀 1행에서 「코드 종목명」 형식의 종목을 찾지 못했습니다.');
+  }catch(err){
+    $('sections').innerHTML=`<div class="empty">데이터를 불러오지 못했습니다. ${esc(err.message)}<br>저장소에 index.html과 같은 위치에 data.xlsx가 있는지 확인하세요.</div>`;
+    return;
+  }
+  D.forEach(e=>{ e.b = e.n.split(' ')[0]; });
+  months=[...new Set(D.flatMap(e=>Object.keys(e.s)))].sort();
+  st.base=months[months.length-1];
+  initControls(); setView(st.view);
+}
+boot();
+</script>
+
+</body>
+</html>
