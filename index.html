@@ -58,6 +58,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-siz
 .promo-a.consult{background:var(--accent);color:var(--accent-ink)}
 .promo-a.yt{background:var(--yt);color:var(--yt-ink)}
 @media (prefers-reduced-motion:reduce){.promo-a{transition:none}.promo-a:hover{transform:none}}
+.sitenav{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:4px;width:max-content;max-width:100%}
+.sitenav a{text-decoration:none;font-weight:600;font-size:14px;color:var(--ink-2);padding:7px 14px;border-radius:9px;white-space:nowrap}
+.sitenav a[aria-current=page]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.sitenav a:not([aria-current]):hover{color:var(--accent)}
+@media (max-width:420px){.sitenav{width:100%}.sitenav a{flex:1;text-align:center;padding:7px 8px;font-size:13.5px}}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
 .brand{display:flex;flex-direction:column;gap:4px;min-width:0}
 .eyebrow{font-size:12px;letter-spacing:.06em;color:var(--accent);font-weight:600}
@@ -204,6 +209,10 @@ footer p{margin:0 0 4px}
       <span class="tx"><b>빽담화TV 보러가기</b><small>월배당·커버드콜 ETF 분석 영상</small></span>
       <span class="go" aria-hidden="true">→</span>
     </a>
+  </nav>
+  <nav class="sitenav" aria-label="도구">
+    <a href="index.html" aria-current="page">분배금 스캐너</a>
+    <a href="retire.html">은퇴자금 계산기</a>
   </nav>
   <header>
     <div class="brand">
